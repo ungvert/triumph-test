@@ -1,8 +1,7 @@
 /** @jsx jsx */
-import { jsx, css } from '@emotion/core';
+import { jsx } from '@emotion/core';
 import { ThemeProvider as EmotionThemeProvider } from 'emotion-theming';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import { Typography } from '@material-ui/core';
 import {
   createMuiTheme,
   responsiveFontSizes,
