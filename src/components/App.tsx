@@ -1,12 +1,12 @@
-import React from "react";
-import Main from "./Main";
+import React from 'react';
+import Main from './Main';
+import ThemeProvider from './ThemeProvider';
 
 function App() {
   return (
-    <div className="App">
-      Hello world!
+    <ThemeProvider>
       <Main />
-    </div>
+    </ThemeProvider>
   );
 }
 
