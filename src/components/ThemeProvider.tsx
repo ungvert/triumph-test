@@ -1,5 +1,5 @@
 /** @jsx jsx */
-import { jsx } from '@emotion/core';
+import { Global, jsx, css } from '@emotion/core';
 import { ThemeProvider as EmotionThemeProvider } from 'emotion-theming';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import {
@@ -25,6 +25,25 @@ let theme = createMuiTheme({
       '"Segoe UI Emoji"',
       '"Segoe UI Symbol"',
     ].join(','),
+
+    h1: {
+      fontWeight: 500,
+    },
+    h2: {
+      fontWeight: 500,
+    },
+    h3: {
+      fontWeight: 500,
+    },
+    h4: {
+      fontWeight: 500,
+    },
+    h5: {
+      fontWeight: 500,
+    },
+    h6: {
+      fontWeight: 500,
+    },
   },
   palette: {
     primary: {
@@ -39,6 +58,14 @@ const ThemeProvider = ({ children }: { children: JSX.Element }) => (
     <MuiThemeProvider theme={theme}>
       <EmotionThemeProvider theme={theme}>
         <CssBaseline />
+        <Global
+          styles={css`
+            .react-sortable-hoc {
+              display: table;
+              box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
+            }
+          `}
+        />
         {children}
       </EmotionThemeProvider>
     </MuiThemeProvider>
