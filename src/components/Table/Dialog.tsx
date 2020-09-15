@@ -82,7 +82,6 @@ export default function TableItemDialog({
             margin="dense"
             type="text"
             value={name}
-            required
             onChange={handleNameChange}
           />
 
