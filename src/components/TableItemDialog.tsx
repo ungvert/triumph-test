@@ -110,6 +110,13 @@ export default function TableItemDialog({
     setOpen(false);
   };
 
+  const handleDelete = () => {
+    setData(data.filter((item) => item.id !== id));
+
+    setActiveItem(null);
+    setOpen(false);
+  };
+
   const handleNameChange = (
     e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
   ) => setName(e.target.value);
@@ -125,7 +132,7 @@ export default function TableItemDialog({
       open={open}
     >
       <DialogTitle id="customized-dialog-title" onClose={handleClose}>
-        Редактировать
+        {isNewItem ? 'Добавить' : 'Редактировать'}
       </DialogTitle>
       <DialogContent dividers>
         <Box>
@@ -153,8 +160,14 @@ export default function TableItemDialog({
         <ColorPicker color={color} setColor={setColor} />
       </DialogContent>
       <DialogActions>
+        {!isNewItem && (
+          <Button onClick={handleDelete} color="secondary">
+            Удалить
+          </Button>
+        )}
+
         <Button onClick={handleSubmit} color="primary">
-          Сохранить
+          {isNewItem ? 'Создать' : 'Сохранить'}
         </Button>
       </DialogActions>
     </Dialog>
