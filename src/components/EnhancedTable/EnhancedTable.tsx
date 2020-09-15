@@ -18,7 +18,7 @@ import {
 import arrayMove from 'array-move';
 import DragIndicatorIcon from '@material-ui/icons/DragIndicator';
 import IconButton from '@material-ui/core/IconButton';
-import { Toolbar, Tooltip, Typography } from '@material-ui/core';
+import { Divider, Toolbar, Tooltip, Typography } from '@material-ui/core';
 import AddBoxIcon from '@material-ui/icons/AddBox';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -47,24 +47,32 @@ export default function SimpleTable({ data, setData }: Props) {
     cellHeader: css`
       font-weight: 600;
       color: ${theme.palette.text.secondary};
+
+      /* padding: 0; */
+      padding: ${theme.spacing(2)}px ${theme.spacing(1)}px;
+    `,
+    cellContent: css`
+      padding: 0 ${theme.spacing(1)}px;
     `,
     cellColorWrapper: css`
       display: flex;
       align-items: center;
-      justify-content: center;
+      justify-content: flex-end;
     `,
     cellColorLegend: css`
       display: inline-block;
       flex-shrink: 0;
       width: ${theme.spacing(4)}px;
       height: ${theme.spacing(4)}px;
-      margin-right: ${theme.spacing(1)}px;
       border-radius: ${theme.spacing(1)}px;
       box-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+      margin: 0 ${theme.spacing(1)}px;
+      margin-left: ${theme.spacing(3)}px;
     `,
     cellColorText: css`
       flex-shrink: 0;
-      flex-basis: 40%;
+
+      min-width: 60px;
     `,
   };
 
@@ -83,7 +91,13 @@ export default function SimpleTable({ data, setData }: Props) {
         }
       `}
     >
-      <TableCell component="th" scope="row">
+      <TableCell
+        component="th"
+        scope="row"
+        css={css`
+          padding: 0;
+        `}
+      >
         <DragHandle />
       </TableCell>
       {value}
@@ -108,17 +122,21 @@ export default function SimpleTable({ data, setData }: Props) {
   return (
     <React.Fragment>
       <Paper>
-        <Toolbar>
-          <Typography variant="h6" id="tableTitle" component="div">
-            {/* Добавить запись */}
+        <Toolbar disableGutters>
+          <IconButton aria-label="filter list" onClick={handleAddClick}>
+            <AddBoxIcon fontSize="large" />
+          </IconButton>
+
+          <Typography variant="body1" component="div" color="textSecondary">
+            Добавить запись
           </Typography>
-          <Tooltip title="Добавить">
-            <IconButton aria-label="filter list" onClick={handleAddClick}>
-              <AddBoxIcon fontSize="large" />
-            </IconButton>
-          </Tooltip>
         </Toolbar>
-        <TableContainer>
+        <Divider />
+        <TableContainer
+          css={css`
+            overflow-x: ${activeItem ? 'hidden' : 'auto'};
+          `}
+        >
           <Table aria-label="simple table" size="small">
             <TableHead>
               <TableRow>
@@ -127,7 +145,7 @@ export default function SimpleTable({ data, setData }: Props) {
                 <TableCell align="right" css={styles.cellHeader}>
                   Type
                 </TableCell>
-                <TableCell align="center" css={styles.cellHeader}>
+                <TableCell align="right" css={styles.cellHeader}>
                   Color
                 </TableCell>
               </TableRow>
@@ -138,7 +156,6 @@ export default function SimpleTable({ data, setData }: Props) {
               helperClass="react-sortable-hoc"
             >
               {data.map((row, i) => {
-                // const row = data[colIdx];
                 return (
                   <SortableItem
                     key={row.id}
@@ -149,36 +166,31 @@ export default function SimpleTable({ data, setData }: Props) {
                           component="th"
                           scope="row"
                           onClick={() => handleClickOpen(row)}
+                          css={styles.cellContent}
                         >
                           {row.name}
                         </TableCell>
-                        <TableCell align="right">{row.type}</TableCell>
-                        <TableCell align="left">
+                        <TableCell
+                          align="right"
+                          css={styles.cellContent}
+                          onClick={() => handleClickOpen(row)}
+                        >
+                          {row.type}
+                        </TableCell>
+                        <TableCell
+                          align="left"
+                          css={styles.cellContent}
+                          onClick={() => handleClickOpen(row)}
+                        >
                           <div css={styles.cellColorWrapper}>
                             <span
                               css={[
                                 styles.cellColorLegend,
                                 css`
-                                  background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAHUlEQVQ4jWNgYGAQIYAJglEDhoUBg9+FowbQ2gAARjwKARjtnN8AAAAASUVORK5CYII=')
-                                    repeat scroll left center;
-                                  position: relative;
+                                  background-color: ${row.color};
                                 `,
                               ]}
-                            >
-                              <span
-                                css={[
-                                  styles.cellColorLegend,
-                                  css`
-                                    background-color: ${row.color};
-                                    opacity: 1;
-                                    position: absolute;
-                                    top: 0;
-                                    left: 0;
-                                  `,
-                                ]}
-                              />
-                            </span>
-
+                            />
                             <span css={styles.cellColorText}> {row.color}</span>
                           </div>
                         </TableCell>

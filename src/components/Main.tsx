@@ -16,8 +16,36 @@ const initialData = [
   return { ...value, id: uuidv4() };
 });
 
+export const loadLocalStorageData = () => {
+  try {
+    const serializedData = localStorage.getItem('data');
+    return serializedData === null ? undefined : JSON.parse(serializedData);
+  } catch (err) {
+    return undefined;
+  }
+};
+
+export const saveLocalStorageData = (data: DataItem[]) => {
+  try {
+    const serializedData = JSON.stringify(data);
+    localStorage.setItem('data', serializedData);
+  } catch (err) {
+    console.error('Не удалось сохранить данные');
+  }
+};
+
 const Main = () => {
-  const [data, setData] = useState(initialData);
+  const localStorageData = loadLocalStorageData();
+
+  const [data, setData] = useState(
+    localStorageData ? localStorageData : initialData
+  );
+
+  const setDataMiddleware = (data: DataItem[]) => {
+    saveLocalStorageData(data);
+    setData(data);
+  };
+
   return (
     <div>
       <Container>
@@ -28,11 +56,18 @@ const Main = () => {
         </Box>
       </Container>
       <Container
-        css={css`
-          max-width: 800px;
+        css={(theme) => css`
+          padding: 0;
+          max-width: 860px;
+          ${theme.breakpoints.up('sm')} {
+            padding: 0 ${theme.spacing(3)}px;
+          }
+          ${theme.breakpoints.up('md')} {
+            padding: 0 ${theme.spacing(5)}px;
+          }
         `}
       >
-        <EnhancedTable data={data} setData={setData} />
+        <EnhancedTable data={data} setData={setDataMiddleware} />
       </Container>
     </div>
   );
