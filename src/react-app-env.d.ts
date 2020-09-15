@@ -5,3 +5,13 @@ type DataItem = {
   type: string;
   color: string;
 };
+
+type SetData = Dispatch<
+  SetStateAction<
+    {
+      name: string;
+      type: string;
+      color: string;
+    }[]
+  >
+>;

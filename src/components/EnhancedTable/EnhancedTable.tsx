@@ -21,42 +21,27 @@ import IconButton from '@material-ui/core/IconButton';
 
 const useStyles = makeStyles({
   table: {
-    minWidth: 350,
+    // minWidth: 320,
+    // maxWidth: 320,
   },
 });
 
 type Props = {
   data: DataItem[];
-  setData: Dispatch<
-    SetStateAction<
-      {
-        name: string;
-        type: string;
-        color: string;
-      }[]
-    >
-  >;
+  setData: SetData
 };
 
 export default function SimpleTable({ data, setData }: Props) {
   const [open, setOpen] = React.useState(false);
-
-  //So I always have an initial reference point, we'll just hang onto the order
+  const [activeItem, setActiveItem] = useState<DataItem | null>(null);
   const [order, setOrder] = useState(
     new Array(data.length).fill(null).map((n, i) => i)
   );
 
-  const onReorderEnd = useCallback(
-    ({ oldIndex, newIndex, collection, isKeySorting }, e) => {
-      const newOrder = [...order];
-      const moved = newOrder.splice(oldIndex, 1);
-      newOrder.splice(newIndex, 0, moved[0]);
-      setOrder(newOrder);
-    },
-    [order, setOrder]
-  );
-
   const handleClickOpen = () => {
+
+  const handleClickOpen = (row: DataItem) => {
+    setActiveItem(row);
     setOpen(true);
   };
 
@@ -71,7 +56,7 @@ export default function SimpleTable({ data, setData }: Props) {
     cellColorWrapper: css`
       display: flex;
       align-items: center;
-      justify-content: flex-end;
+      justify-content: center;
     `,
     cellColorLegend: css`
       display: inline-block;
@@ -79,8 +64,13 @@ export default function SimpleTable({ data, setData }: Props) {
       width: ${theme.spacing(5)}px;
       height: ${theme.spacing(5)}px;
       margin-right: ${theme.spacing(1)}px;
-      border: 1px solid ${theme.palette.grey[400]};
+      /* border: 1px solid ${theme.palette.grey[400]}; */
       border-radius: ${theme.spacing(1)}px;
+      box-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+    `,
+    cellColorText: css`
+      flex-shrink: 0;
+      flex-basis: 30%;
     `,
   };
 
@@ -129,7 +119,7 @@ export default function SimpleTable({ data, setData }: Props) {
           /* position: relative; */
         `}
       >
-        <Table className={classes.table} aria-label="simple table">
+        <Table className={classes.table} aria-label="simple table" size="small">
           <TableHead>
             <TableRow>
               <TableCell css={styles.cellHeader}></TableCell>
@@ -137,13 +127,12 @@ export default function SimpleTable({ data, setData }: Props) {
               <TableCell align="right" css={styles.cellHeader}>
                 Type
               </TableCell>
-              <TableCell align="right" css={styles.cellHeader}>
+              <TableCell align="center" css={styles.cellHeader}>
                 Color
               </TableCell>
             </TableRow>
           </TableHead>
           <SortableRowContainer
-            axis={'y'}
             onSortEnd={onSortEnd}
             useDragHandle
             helperClass="react-sortable-hoc"
@@ -156,21 +145,41 @@ export default function SimpleTable({ data, setData }: Props) {
                   index={i}
                   value={
                     <React.Fragment>
-                      <TableCell component="th" scope="row">
+                      <TableCell
+                        component="th"
+                        scope="row"
+                        onClick={() => handleClickOpen(row)}
+                      >
                         {row.name}
                       </TableCell>
                       <TableCell align="right">{row.type}</TableCell>
-                      <TableCell align="right">
+                      <TableCell align="left">
                         <div css={styles.cellColorWrapper}>
                           <span
                             css={[
                               styles.cellColorLegend,
                               css`
-                                background-color: ${row.color};
+                                background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAHUlEQVQ4jWNgYGAQIYAJglEDhoUBg9+FowbQ2gAARjwKARjtnN8AAAAASUVORK5CYII=')
+                                  repeat scroll left center;
+                                position: relative;
                               `,
                             ]}
-                          ></span>
-                          <span> {row.color}</span>
+                          >
+                            <span
+                              css={[
+                                styles.cellColorLegend,
+                                css`
+                                  background-color: ${row.color};
+                                  opacity: 1;
+                                  position: absolute;
+                                  top: 0;
+                                  left: 0;
+                                `,
+                              ]}
+                            />
+                          </span>
+
+                          <span css={styles.cellColorText}> {row.color}</span>
                         </div>
                       </TableCell>
                     </React.Fragment>
@@ -181,7 +190,7 @@ export default function SimpleTable({ data, setData }: Props) {
           </SortableRowContainer>
         </Table>
       </TableContainer>
-      <TableItemDialog open={open} setOpen={setOpen} />
+      <TableItemDialog open={open} setOpen={setOpen} data={activeItem}  setData={setData}/>
     </React.Fragment>
   );
 }

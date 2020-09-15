@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   createStyles,
   Theme,
@@ -13,6 +13,10 @@ import MuiDialogActions from '@material-ui/core/DialogActions';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import Typography from '@material-ui/core/Typography';
+import ColorPicker from './ColorPicker';
+import { RGBColor } from 'react-color';
+import TextField from '@material-ui/core/TextField';
+import Box from '@material-ui/core/Box';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -64,56 +68,70 @@ const DialogActions = withStyles((theme: Theme) => ({
     padding: theme.spacing(1),
   },
 }))(MuiDialogActions);
+
 type Props = {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  dataItem: DataItem | null;
+  setData: SetData;
 };
-export default function TableItemDialog({ open, setOpen }: Props) {
+export default function TableItemDialog({
+  open,
+  setOpen,
+  dataItem,
+  setData,
+}: Props) {
   //   const [open, setOpen] = React.useState(false);
 
   //   const handleClickOpen = () => {
   //     setOpen(true);
   //   };
+  // const [color, setColor] = useState<RGBColor>({ r: 0, g: 0, b: 0, a: 1 });
+
   const handleClose = () => {
+    setData()
     setOpen(false);
   };
 
+  const color = dataItem ? dataItem.color : '#000000';
+
   return (
-    <div>
-      {/* <Button variant="outlined" color="primary" onClick={handleClickOpen}>
-        Open dialog
-      </Button> */}
-      <Dialog
-        onClose={handleClose}
-        aria-labelledby="customized-dialog-title"
-        open={open}
-      >
-        <DialogTitle id="customized-dialog-title" onClose={handleClose}>
-          Modal title
-        </DialogTitle>
-        <DialogContent dividers>
-          <Typography gutterBottom>
-            Cras mattis consectetur purus sit amet fermentum. Cras justo odio,
-            dapibus ac facilisis in, egestas eget quam. Morbi leo risus, porta
-            ac consectetur ac, vestibulum at eros.
-          </Typography>
-          <Typography gutterBottom>
-            Praesent commodo cursus magna, vel scelerisque nisl consectetur et.
-            Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor
-            auctor.
-          </Typography>
-          <Typography gutterBottom>
-            Aenean lacinia bibendum nulla sed consectetur. Praesent commodo
-            cursus magna, vel scelerisque nisl consectetur et. Donec sed odio
-            dui. Donec ullamcorper nulla non metus auctor fringilla.
-          </Typography>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose} color="primary">
-            Save changes
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </div>
+    <Dialog
+      onClose={handleClose}
+      aria-labelledby="customized-dialog-title"
+      open={open}
+    >
+      <DialogTitle id="customized-dialog-title" onClose={handleClose}>
+        Редактировать
+      </DialogTitle>
+      <DialogContent dividers>
+        <Box>
+          <TextField
+            label="Name"
+            variant="outlined"
+            size="small"
+            margin="dense"
+            type="text"
+            value={dataItem?.name}
+          />
+
+          <TextField
+            label="Type"
+            variant="outlined"
+            size="small"
+            margin="dense"
+            type="text"
+            value={dataItem?.type}
+          />
+        </Box>
+
+        <ColorPicker initialColor={color} />
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={handleClose} color="primary">
+          Сохранить
+        </Button>
+      </DialogActions>
+    </Dialog>
   );
 }

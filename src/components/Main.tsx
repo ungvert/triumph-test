@@ -9,6 +9,8 @@ const Main = () => {
     { name: 'Grey1', type: 'main', color: '#f4f4f4' },
     { name: 'Grey2', type: 'side', color: '#f8f8f8' },
     { name: 'Tomato', type: 'side', color: '#ff6347' },
+    { name: 'Cyan', type: 'side', color: '#00ffff' },
+    { name: 'Blanchedalmond', type: 'side', color: '#ffebcd' },
   ];
 
   const [data, setData] = useState(initialData);
