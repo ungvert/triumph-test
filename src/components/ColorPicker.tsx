@@ -15,19 +15,14 @@ import {
   ChromePicker,
 } from 'react-color';
 type Props = {
-  initialColor: string;
+  color: string;
+  setColor: React.Dispatch<React.SetStateAction<string>>;
 };
-export default function ColorPicker({ initialColor }: Props) {
-  const [color, setColor] = useState<RGBColor | string>(initialColor);
-  const [colorObject, setColorObject] = useState<ColorResult | undefined>(
-    undefined
-  );
+export default function ColorPicker({ color, setColor }: Props) {
   const theme = useTheme();
 
   function handleChange(e: ColorResult) {
-    // console.log(e);
-    setColor(e.rgb);
-    setColorObject(e);
+    setColor(e.hex);
   }
   return (
     <div>
@@ -38,7 +33,8 @@ export default function ColorPicker({ initialColor }: Props) {
           size="small"
           margin="dense"
           type="text"
-          value={colorObject ? colorObject.hex : color}
+          disabled
+          value={color}
         />
       </Box>
       <SketchPicker
@@ -62,14 +58,9 @@ export default function ColorPicker({ initialColor }: Props) {
           }
         `}
       />
-      {/* <ChromePicker  color={color} onChange={handleChange} /> */}
       <Box my={3}>
         <SliderPicker color={color} onChange={handleChange} />
-        {/* <HuePicker color={color} onChange={handleChange} /> */}
       </Box>
-      {/* <Box my={1}>
-        <AlphaPicker width={'100%'} color={color} onChange={handleChange} />
-      </Box> */}
 
       <Box
         css={css`

@@ -28,7 +28,7 @@ const useStyles = makeStyles({
 
 type Props = {
   data: DataItem[];
-  setData: SetData
+  setData: SetData;
 };
 
 export default function SimpleTable({ data, setData }: Props) {
@@ -37,8 +37,6 @@ export default function SimpleTable({ data, setData }: Props) {
   const [order, setOrder] = useState(
     new Array(data.length).fill(null).map((n, i) => i)
   );
-
-  const handleClickOpen = () => {
 
   const handleClickOpen = (row: DataItem) => {
     setActiveItem(row);
@@ -137,11 +135,11 @@ export default function SimpleTable({ data, setData }: Props) {
             useDragHandle
             helperClass="react-sortable-hoc"
           >
-            {order.map((colIdx, i) => {
-              const row = data[colIdx];
+            {data.map((row, i) => {
+              // const row = data[colIdx];
               return (
                 <SortableItem
-                  key={colIdx}
+                  key={row.id}
                   index={i}
                   value={
                     <React.Fragment>
@@ -190,7 +188,16 @@ export default function SimpleTable({ data, setData }: Props) {
           </SortableRowContainer>
         </Table>
       </TableContainer>
-      <TableItemDialog open={open} setOpen={setOpen} data={activeItem}  setData={setData}/>
+      {activeItem && (
+        <TableItemDialog
+          open={open}
+          setOpen={setOpen}
+          data={data}
+          dataItem={activeItem}
+          setData={setData}
+          setActiveItem={setActiveItem}
+        />
+      )}
     </React.Fragment>
   );
 }

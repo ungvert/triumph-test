@@ -4,6 +4,7 @@ type DataItem = {
   name: string;
   type: string;
   color: string;
+  id: string;
 };
 
 type SetData = Dispatch<
@@ -12,6 +13,7 @@ type SetData = Dispatch<
       name: string;
       type: string;
       color: string;
+      id: string;
     }[]
   >
 >;

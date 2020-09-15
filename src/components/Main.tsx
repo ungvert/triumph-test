@@ -4,15 +4,19 @@ import { Box, Container, Typography } from '@material-ui/core';
 import { useState } from 'react';
 import EnhancedTable from './EnhancedTable/EnhancedTable';
 
-const Main = () => {
-  const initialData = [
-    { name: 'Grey1', type: 'main', color: '#f4f4f4' },
-    { name: 'Grey2', type: 'side', color: '#f8f8f8' },
-    { name: 'Tomato', type: 'side', color: '#ff6347' },
-    { name: 'Cyan', type: 'side', color: '#00ffff' },
-    { name: 'Blanchedalmond', type: 'side', color: '#ffebcd' },
-  ];
+import { v4 as uuidv4 } from 'uuid';
 
+const initialData = [
+  { name: 'Grey1', type: 'main', color: '#f4f4f4' },
+  { name: 'Grey2', type: 'side', color: '#f8f8f8' },
+  { name: 'Tomato', type: 'side', color: '#ff6347' },
+  { name: 'Cyan', type: 'side', color: '#00ffff' },
+  { name: 'Blanchedalmond', type: 'side', color: '#ffebcd' },
+].map((value) => {
+  return { ...value, id: uuidv4() };
+});
+
+const Main = () => {
   const [data, setData] = useState(initialData);
   return (
     <div>

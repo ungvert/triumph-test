@@ -14,9 +14,9 @@ import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import Typography from '@material-ui/core/Typography';
 import ColorPicker from './ColorPicker';
-import { RGBColor } from 'react-color';
 import TextField from '@material-ui/core/TextField';
 import Box from '@material-ui/core/Box';
+import { v4 as uuidv4 } from 'uuid';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -72,28 +72,47 @@ const DialogActions = withStyles((theme: Theme) => ({
 type Props = {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  data: DataItem[];
   dataItem: DataItem | null;
   setData: SetData;
+  setActiveItem: React.Dispatch<React.SetStateAction<DataItem | null>>;
 };
 export default function TableItemDialog({
   open,
   setOpen,
+  data,
   dataItem,
   setData,
+  setActiveItem,
 }: Props) {
-  //   const [open, setOpen] = React.useState(false);
+  const [name, setName] = useState(dataItem ? dataItem.name : '');
+  const [type, setType] = useState(dataItem ? dataItem.type : '');
 
-  //   const handleClickOpen = () => {
-  //     setOpen(true);
-  //   };
-  // const [color, setColor] = useState<RGBColor>({ r: 0, g: 0, b: 0, a: 1 });
+  const [color, setColor] = useState<string>(
+    dataItem ? dataItem.color : '#000000'
+  );
 
-  const handleClose = () => {
-    setData()
+  const id = dataItem ? dataItem.id : uuidv4();
+
+  const handleSubmit = () => {
+    setData(
+      data.map((item) => (item.id === id ? { name, type, color, id } : item))
+    );
+    setActiveItem(null);
     setOpen(false);
   };
 
-  const color = dataItem ? dataItem.color : '#000000';
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleNameChange = (
+    e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
+  ) => setName(e.target.value);
+
+  const handleTypeChange = (
+    e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
+  ) => setType(e.target.value);
 
   return (
     <Dialog
@@ -112,7 +131,8 @@ export default function TableItemDialog({
             size="small"
             margin="dense"
             type="text"
-            value={dataItem?.name}
+            value={name}
+            onChange={handleNameChange}
           />
 
           <TextField
@@ -121,14 +141,15 @@ export default function TableItemDialog({
             size="small"
             margin="dense"
             type="text"
-            value={dataItem?.type}
+            value={type}
+            onChange={handleTypeChange}
           />
         </Box>
 
-        <ColorPicker initialColor={color} />
+        <ColorPicker color={color} setColor={setColor} />
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleClose} color="primary">
+        <Button onClick={handleSubmit} color="primary">
           Сохранить
         </Button>
       </DialogActions>
