@@ -1,33 +1,26 @@
 /** @jsx jsx */
 import { jsx, css } from '@emotion/core';
-import React, { useCallback, useState, SetStateAction, Dispatch } from 'react';
-import { makeStyles, useTheme } from '@material-ui/core/styles';
+import React, { useState } from 'react';
+import { useTheme } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
-import TableItemDialog from '../TableItemDialog';
-import {
-  SortableContainer,
-  SortableElement,
-  SortableHandle,
-} from 'react-sortable-hoc';
+import TableItemDialog from './Dialog';
 import arrayMove from 'array-move';
-import DragIndicatorIcon from '@material-ui/icons/DragIndicator';
 import IconButton from '@material-ui/core/IconButton';
-import { Divider, Toolbar, Tooltip, Typography } from '@material-ui/core';
+import { Divider, Toolbar, Typography } from '@material-ui/core';
 import AddBoxIcon from '@material-ui/icons/AddBox';
-import { v4 as uuidv4 } from 'uuid';
+import { SortableRowContainer, SortableItem } from './TableSortableRows';
 
 type Props = {
   data: DataItem[];
   setData: SetData;
 };
 
-export default function SimpleTable({ data, setData }: Props) {
+export default function EnchancedTable({ data, setData }: Props) {
   const [open, setOpen] = React.useState(false);
   const [activeItem, setActiveItem] = useState<DataItem | null>(null);
 
@@ -47,8 +40,6 @@ export default function SimpleTable({ data, setData }: Props) {
     cellHeader: css`
       font-weight: 600;
       color: ${theme.palette.text.secondary};
-
-      /* padding: 0; */
       padding: ${theme.spacing(2)}px ${theme.spacing(1)}px;
     `,
     cellContent: css`
@@ -71,44 +62,9 @@ export default function SimpleTable({ data, setData }: Props) {
     `,
     cellColorText: css`
       flex-shrink: 0;
-
-      min-width: 60px;
+      min-width: ${theme.spacing(8)}px;
     `,
   };
-
-  const SortableRowContainer = SortableContainer(
-    ({ children }: { children: JSX.Element[] }) => {
-      return <TableBody>{children}</TableBody>;
-    }
-  );
-
-  const SortableItem = SortableElement(({ value }: { value: JSX.Element }) => (
-    <TableRow
-      hover
-      css={css`
-        :hover {
-          box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
-        }
-      `}
-    >
-      <TableCell
-        component="th"
-        scope="row"
-        css={css`
-          padding: 0;
-        `}
-      >
-        <DragHandle />
-      </TableCell>
-      {value}
-    </TableRow>
-  ));
-
-  const DragHandle = SortableHandle(() => (
-    <IconButton aria-label="drag">
-      <DragIndicatorIcon />
-    </IconButton>
-  ));
 
   const onSortEnd = ({
     oldIndex,
@@ -119,6 +75,7 @@ export default function SimpleTable({ data, setData }: Props) {
   }) => {
     setData(arrayMove(data, oldIndex, newIndex));
   };
+
   return (
     <React.Fragment>
       <Paper>
