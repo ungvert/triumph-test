@@ -73,7 +73,7 @@ type Props = {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   data: DataItem[];
-  dataItem: DataItem | null;
+  dataItem: DataItem;
   setData: SetData;
   setActiveItem: React.Dispatch<React.SetStateAction<DataItem | null>>;
 };
@@ -85,24 +85,28 @@ export default function TableItemDialog({
   setData,
   setActiveItem,
 }: Props) {
-  const [name, setName] = useState(dataItem ? dataItem.name : '');
-  const [type, setType] = useState(dataItem ? dataItem.type : '');
+  const isNewItem = !dataItem.id;
 
-  const [color, setColor] = useState<string>(
-    dataItem ? dataItem.color : '#000000'
-  );
+  const [name, setName] = useState(dataItem.name);
+  const [type, setType] = useState(dataItem.type);
+  const [color, setColor] = useState<string>(dataItem.color);
 
-  const id = dataItem ? dataItem.id : uuidv4();
+  const id = isNewItem ? uuidv4() : dataItem.id;
 
   const handleSubmit = () => {
-    setData(
-      data.map((item) => (item.id === id ? { name, type, color, id } : item))
-    );
+    const changedItem = { name, type, color, id };
+    if (isNewItem) {
+      setData([...data, changedItem]);
+    } else {
+      setData(data.map((item) => (item.id === id ? changedItem : item)));
+    }
+
     setActiveItem(null);
     setOpen(false);
   };
 
   const handleClose = () => {
+    setActiveItem(null);
     setOpen(false);
   };
 

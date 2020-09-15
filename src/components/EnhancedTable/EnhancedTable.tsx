@@ -18,13 +18,9 @@ import {
 import arrayMove from 'array-move';
 import DragIndicatorIcon from '@material-ui/icons/DragIndicator';
 import IconButton from '@material-ui/core/IconButton';
-
-const useStyles = makeStyles({
-  table: {
-    // minWidth: 320,
-    // maxWidth: 320,
-  },
-});
+import { Toolbar, Tooltip, Typography } from '@material-ui/core';
+import AddBoxIcon from '@material-ui/icons/AddBox';
+import { v4 as uuidv4 } from 'uuid';
 
 type Props = {
   data: DataItem[];
@@ -34,17 +30,18 @@ type Props = {
 export default function SimpleTable({ data, setData }: Props) {
   const [open, setOpen] = React.useState(false);
   const [activeItem, setActiveItem] = useState<DataItem | null>(null);
-  const [order, setOrder] = useState(
-    new Array(data.length).fill(null).map((n, i) => i)
-  );
 
   const handleClickOpen = (row: DataItem) => {
     setActiveItem(row);
     setOpen(true);
   };
 
+  const handleAddClick = () => {
+    setActiveItem({ name: '', type: '', color: '#000000', id: '' });
+    setOpen(true);
+  };
+
   const theme = useTheme();
-  const classes = useStyles();
 
   const styles = {
     cellHeader: css`
@@ -59,16 +56,15 @@ export default function SimpleTable({ data, setData }: Props) {
     cellColorLegend: css`
       display: inline-block;
       flex-shrink: 0;
-      width: ${theme.spacing(5)}px;
-      height: ${theme.spacing(5)}px;
+      width: ${theme.spacing(4)}px;
+      height: ${theme.spacing(4)}px;
       margin-right: ${theme.spacing(1)}px;
-      /* border: 1px solid ${theme.palette.grey[400]}; */
       border-radius: ${theme.spacing(1)}px;
       box-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
     `,
     cellColorText: css`
       flex-shrink: 0;
-      flex-basis: 30%;
+      flex-basis: 40%;
     `,
   };
 
@@ -80,6 +76,7 @@ export default function SimpleTable({ data, setData }: Props) {
 
   const SortableItem = SortableElement(({ value }: { value: JSX.Element }) => (
     <TableRow
+      hover
       css={css`
         :hover {
           box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
@@ -108,86 +105,93 @@ export default function SimpleTable({ data, setData }: Props) {
   }) => {
     setData(arrayMove(data, oldIndex, newIndex));
   };
-
   return (
     <React.Fragment>
-      <TableContainer
-        component={Paper}
-        css={css`
-          /* position: relative; */
-        `}
-      >
-        <Table className={classes.table} aria-label="simple table" size="small">
-          <TableHead>
-            <TableRow>
-              <TableCell css={styles.cellHeader}></TableCell>
-              <TableCell css={styles.cellHeader}>Name</TableCell>
-              <TableCell align="right" css={styles.cellHeader}>
-                Type
-              </TableCell>
-              <TableCell align="center" css={styles.cellHeader}>
-                Color
-              </TableCell>
-            </TableRow>
-          </TableHead>
-          <SortableRowContainer
-            onSortEnd={onSortEnd}
-            useDragHandle
-            helperClass="react-sortable-hoc"
-          >
-            {data.map((row, i) => {
-              // const row = data[colIdx];
-              return (
-                <SortableItem
-                  key={row.id}
-                  index={i}
-                  value={
-                    <React.Fragment>
-                      <TableCell
-                        component="th"
-                        scope="row"
-                        onClick={() => handleClickOpen(row)}
-                      >
-                        {row.name}
-                      </TableCell>
-                      <TableCell align="right">{row.type}</TableCell>
-                      <TableCell align="left">
-                        <div css={styles.cellColorWrapper}>
-                          <span
-                            css={[
-                              styles.cellColorLegend,
-                              css`
-                                background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAHUlEQVQ4jWNgYGAQIYAJglEDhoUBg9+FowbQ2gAARjwKARjtnN8AAAAASUVORK5CYII=')
-                                  repeat scroll left center;
-                                position: relative;
-                              `,
-                            ]}
-                          >
+      <Paper>
+        <Toolbar>
+          <Typography variant="h6" id="tableTitle" component="div">
+            {/* Добавить запись */}
+          </Typography>
+          <Tooltip title="Добавить">
+            <IconButton aria-label="filter list" onClick={handleAddClick}>
+              <AddBoxIcon fontSize="large" />
+            </IconButton>
+          </Tooltip>
+        </Toolbar>
+        <TableContainer>
+          <Table aria-label="simple table" size="small">
+            <TableHead>
+              <TableRow>
+                <TableCell css={styles.cellHeader}></TableCell>
+                <TableCell css={styles.cellHeader}>Name</TableCell>
+                <TableCell align="right" css={styles.cellHeader}>
+                  Type
+                </TableCell>
+                <TableCell align="center" css={styles.cellHeader}>
+                  Color
+                </TableCell>
+              </TableRow>
+            </TableHead>
+            <SortableRowContainer
+              onSortEnd={onSortEnd}
+              useDragHandle
+              helperClass="react-sortable-hoc"
+            >
+              {data.map((row, i) => {
+                // const row = data[colIdx];
+                return (
+                  <SortableItem
+                    key={row.id}
+                    index={i}
+                    value={
+                      <React.Fragment>
+                        <TableCell
+                          component="th"
+                          scope="row"
+                          onClick={() => handleClickOpen(row)}
+                        >
+                          {row.name}
+                        </TableCell>
+                        <TableCell align="right">{row.type}</TableCell>
+                        <TableCell align="left">
+                          <div css={styles.cellColorWrapper}>
                             <span
                               css={[
                                 styles.cellColorLegend,
                                 css`
-                                  background-color: ${row.color};
-                                  opacity: 1;
-                                  position: absolute;
-                                  top: 0;
-                                  left: 0;
+                                  background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAHUlEQVQ4jWNgYGAQIYAJglEDhoUBg9+FowbQ2gAARjwKARjtnN8AAAAASUVORK5CYII=')
+                                    repeat scroll left center;
+                                  position: relative;
                                 `,
                               ]}
-                            />
-                          </span>
+                            >
+                              <span
+                                css={[
+                                  styles.cellColorLegend,
+                                  css`
+                                    background-color: ${row.color};
+                                    opacity: 1;
+                                    position: absolute;
+                                    top: 0;
+                                    left: 0;
+                                  `,
+                                ]}
+                              />
+                            </span>
 
-                          <span css={styles.cellColorText}> {row.color}</span>
-                        </div>
-                      </TableCell>
-                    </React.Fragment>
-                  }
-                ></SortableItem>
-              );
-            })}
-          </SortableRowContainer>
-        </Table>
-      </TableContainer>
+                            <span css={styles.cellColorText}> {row.color}</span>
+                          </div>
+                        </TableCell>
+                      </React.Fragment>
+                    }
+                  ></SortableItem>
+                );
+              })}
+            </SortableRowContainer>
+          </Table>
+        </TableContainer>
+      </Paper>
+
       {activeItem && (
         <TableItemDialog
           open={open}

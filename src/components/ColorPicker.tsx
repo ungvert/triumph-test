@@ -45,14 +45,6 @@ export default function ColorPicker({ color, setColor }: Props) {
         css={css`
           box-sizing: border-box !important ;
           padding: 0 !important ;
-          span {
-            font-size: ${theme.spacing(2)}px !important;
-          }
-
-          input {
-            font-family: ${theme.typography.fontFamily};
-            font-size: 13px !important;
-          }
           .flexbox-fix {
             display: none !important;
           }
